@@ -15,7 +15,7 @@ class ScreenCapture():
                 img = pyautogui.screenshot()
                 image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
                 """ 
-                TODO: tranform, reshape and everything that needed!
+                TODO: transform, reshape and everything that needed!
                 """
                 detected_image = model(image)
                 self.buffer.append(detected_image)
@@ -27,11 +27,10 @@ class ScreenCapture():
                 break
 
     def save_to_video(self, out_path):
+        height, width, channels = self.buffer[0].shape
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(out_path, fourcc, 20.0, (width, height))
         for image in self.buffer:
-            height, width, channels = image.shape
-            # Define the codec and create VideoWriter object
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            out = cv2.VideoWriter(out_path, fourcc, 20.0, (width, height))
             out.write(image)
             StopIteration(0.5)
         out.release()
