@@ -4,28 +4,8 @@ import mss
 import mss.tools
 import time
 from SoccerVision.Models.yolo_nas_l import YoloNasL
+from PIL import Image
 
-
-def screenshot(monitor_number: int):
-    with mss.mss() as sct:
-        # Get information of monitor 2
-        mon = sct.monitors[monitor_number]
-
-        # The screen part to capture
-        monitor = {
-            "top": mon["top"],
-            "left": mon["left"],
-            "width": mon["width"],
-            "height": mon["height"],
-            "mon": monitor_number,
-        }
-        output = f"./Cache/input.png".format(**monitor)
-
-        # Grab the data
-        sct_img = sct.grab(monitor)
-
-        # Save to the picture file
-        mss.tools.to_png(sct_img.rgb, sct_img.size, output=output)
 
 
 class ScreenCapture():
@@ -33,51 +13,46 @@ class ScreenCapture():
     def __init__(self, out_path):
         self.buffer = []
 
-    def stream_detection(self, model):
+    def stream_detection(self, model, monitor_number: int ):
 
         prev_frame_time = 0
         new_frame_time = 0
         count = 0
-        while (True):
-            try:
-                start = time.time()
-                screenshot(2)
-                # read screenshot (input)
-                image = cv2.imread(f"./Cache/input.png")
-                image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-                """ 
-                TODO: transform, reshape and everything that needed!
-                """
-                start_model = time.time()
 
-                # feed forward to model
-                detected_image = model(image)
-                detected_image.save("./Cache/")
+        with mss.mss() as sct:
+                    # Get information of monitor 2
+                 mon = sct.monitors[monitor_number]
 
-                # save output
-                image = cv2.imread(f"./Cache/pred_0.jpg")
-                end_model = time.time() - start
+                    # The screen part to capture
+                 monitor = {
+                        "top": mon["top"],
+                        "left": mon["left"],
+                        "width": mon["width"],
+                        "height": mon["height"],
+                        "mon": monitor_number,
+                    }
+                 previous_time = 0
 
-                print("model latency: ", end_model)
-                new_frame_time = time.time()
-                fps = 1 / (new_frame_time - prev_frame_time)
-                prev_frame_time = new_frame_time
+                 while True:
+                        previous_time = time.time()
+                        # Grab the data
+                        sct_img = sct.grab(monitor)
+                        frame = Image.frombytes('RGB', (sct_img.width, sct_img.height), sct_img.rgb)
 
-                # calculate fps and put it on image
-                cv2.putText(image, str(fps), (3, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (100, 255, 0), 1, cv2.LINE_AA)
-                cv2.imshow("myphoto", image)
-                if cv2.waitKey(1) == ord("q"):
-                    break
+                        # detected_image =
+                        # image = image[ ::2, ::2, : ] # can be used to downgrade the input
+                        frame = cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2RGB)
+                        detected_image = model(frame)
+                        print(type(detected_image))
 
-                """
-                TODO: image show
-                """
-                # check app latency
-                end = time.time() - start
-                print("app latency: ", end)
-            except KeyboardInterrupt:
-                break
-        return count
+                        cv2.imshow('frame', detected_image[0].draw())
+
+                        if cv2.waitKey(1) & 0xff == ord('q'):
+                            cv2.destroyAllWindows()
+                            break
+
+                        txt1 = 'fps: %.1f' % (1 / (time.time() - previous_time))
+                        print(txt1)
 
     def save_to_video(self, out_path):
         height, width, channels = self.buffer[0].shape
@@ -93,4 +68,4 @@ class ScreenCapture():
 if __name__ == "__main__":
     stream = ScreenCapture(None)
     model = YoloNasL(4, None)
-    print(stream.stream_detection(model))
+    stream.stream_detection(model,2)
