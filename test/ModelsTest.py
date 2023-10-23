@@ -1,5 +1,5 @@
 import unittest
-from SoccerVision.Models.yolo_nas_l import YoloNasL
+from SoccerVision.Models import yolo
 import time
 
 

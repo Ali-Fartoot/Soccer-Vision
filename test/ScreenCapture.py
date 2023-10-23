@@ -13,22 +13,6 @@ class CaptureVisionTest(unittest.TestCase):
         self.assertEqual(height, 1920)  # add assertion here
         self.assertEqual(width, 1080)  # add assertion here
 
-    def validating_ouput_video(self):
-        """ check if the video is on disk end of program or not!"""
-        pass
-
-    def check_input_model(self):
-        """ check the input shape of model"""
-        pass
-
-    def test_latency(self):
-        pass
-
-    def test_buffer_delay(self):
-        pass
-
-
-
 
 if __name__ == '__main__':
     unittest.main()

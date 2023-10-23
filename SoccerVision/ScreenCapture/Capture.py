@@ -3,9 +3,8 @@ import numpy as np
 import mss
 import mss.tools
 import time
-from SoccerVision.Models.yolo_nas_l import YoloNasL
 from PIL import Image
-
+from ultralytics import YOLO
 
 
 class ScreenCapture():
@@ -35,24 +34,45 @@ class ScreenCapture():
 
                  while True:
                         previous_time = time.time()
-                        # Grab the data
+
+                        # Grab the monitor
                         sct_img = sct.grab(monitor)
                         frame = Image.frombytes('RGB', (sct_img.width, sct_img.height), sct_img.rgb)
-
-                        # detected_image =
-                        # image = image[ ::2, ::2, : ] # can be used to downgrade the input
                         frame = cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2RGB)
-                        detected_image = model(frame)
-                        print(type(detected_image))
 
-                        cv2.imshow('frame', detected_image[0].draw())
+                        # predicting
+                        results = model.predict(frame, stream=True)
 
+                        for result in results:
+                            count = 0
+                            boxes = result.boxes.cpu().numpy()
+                            i = 0
+                            for box in boxes:  # iterate boxes
+                                r = box.xyxy[0].astype(int)  # get corner points as int
+                                cv2.rectangle(frame, r[:2], r[2:], (0, 255, 0), 2)
+
+                                class_tag  = result.names[int(box.cls[i])] # find labels
+                                cv2.putText(frame,str(class_tag),(r[0], r[1] - 10), cv2.FONT_HERSHEY_SIMPLEX,1,(0, 225 ,0),2,3)
+
+                                i = i + 0
+                        # calculate fps
+                        txt1 = 'fps: %.1f' % (1 / (time.time() - previous_time))
+                        cv2.putText(
+                            frame,
+                            txt1,
+                            (10,50),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            1,
+                            (0, 225 ,0),
+                            2,
+                            3)
+
+                        cv2.imshow('SoccerVision', frame)
                         if cv2.waitKey(1) & 0xff == ord('q'):
                             cv2.destroyAllWindows()
                             break
 
-                        txt1 = 'fps: %.1f' % (1 / (time.time() - previous_time))
-                        print(txt1)
+
 
     def save_to_video(self, out_path):
         height, width, channels = self.buffer[0].shape
@@ -67,5 +87,5 @@ class ScreenCapture():
 
 if __name__ == "__main__":
     stream = ScreenCapture(None)
-    model = YoloNasL(4, None)
-    stream.stream_detection(model,2)
+    model = YOLO("../Models/yolov8/yolov8l.pt")
+    stream.stream_detection(model, 2)
