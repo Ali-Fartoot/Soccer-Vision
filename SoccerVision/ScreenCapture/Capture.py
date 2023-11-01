@@ -31,6 +31,12 @@ class ScreenCapture():
                         "mon": monitor_number,
                     }
                  previous_time = 0
+                 colors = {
+                     0: (0 ,255 ,0),
+                     1: (255, 0, 0),
+                     2: (0, 0, 255),
+                     3: (255, 255, 0),
+                 }
 
                  while True:
                         previous_time = time.time()
@@ -49,9 +55,8 @@ class ScreenCapture():
                             i = 0
                             for box in boxes:  # iterate boxes
                                 r = box.xyxy[0].astype(int)  # get corner points as int
-                                cv2.rectangle(frame, r[:2], r[2:], (0, 255, 0), 2)
-
                                 class_tag  = result.names[int(box.cls[i])] # find labels
+                                cv2.rectangle(frame, r[:2], r[2:], colors[box.cls[i]], 2)
                                 cv2.putText(frame,str(class_tag),(r[0], r[1] - 10), cv2.FONT_HERSHEY_SIMPLEX,1,(0, 225 ,0),2,3)
 
                                 i = i + 0
