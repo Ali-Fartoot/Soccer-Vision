@@ -2,6 +2,8 @@
 Overview
 This repository contains a Python program utilizing YOLOv8 from Ultralytics to perform team prediction and player detection in a custom dataset. The program achieves an mAP of 38 at 50 IoU (Intersection over Union) and maintains an average FPS (Frames Per Second) range of 18-20.
 
+![Scene](https://github.com/Ali-Fartout/Soccer-Vision/blob/master/Screenshot%202023-11-24%20135143.png)
+
 # Features
 * Team Prediction: Identifies and predicts teams based on specified criteria.
 * Player Detection: Detects and localizes players within a given frame or set of frames.
