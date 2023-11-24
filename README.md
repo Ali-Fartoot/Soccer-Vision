@@ -17,5 +17,5 @@ Ultralytics YOLOv8
 Custom Dataset (Refer to dataset preparation section
 
 # Usage
-1. git clone https://github.com/your_username/team-prediction-yolov8.git
+1. git clone [https://github.com/your_username/team-prediction-yolov8.git](https://github.com/Ali-Fartout/Soccer-Vision.git)https://github.com/Ali-Fartout/Soccer-Vision.git
 2. run capture.py
