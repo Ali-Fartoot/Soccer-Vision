@@ -13,10 +13,9 @@ This repository contains a Python program utilizing YOLOv8 from Ultralytics to p
 * FPS Monitoring: Sustains an average FPS range of 18-20 for real-time or batch processing.
 
 # Requirements
-Python 3.x
-PyTorch
-Ultralytics YOLOv8
-Custom Dataset (Refer to dataset preparation section
+* Python 3.x
+* PyTorch
+* Ultralytics YOLOv8
 
 # Usage
 1. git clone https://github.com/Ali-Fartout/Soccer-Vision.git
